@@ -1,0 +1,13 @@
+name: ExploBattle2
+author: NBSgamesAT
+api-version: 1.19
+version: 1.0
+main: at.nbsgames.explobattle.Main
+
+commands:
+  testcommand1:
+    usage: /testcommand1
+    description: Executes Testcommand 1
+  testcommand2:
+    usage: /testcommand2 <args>
+    description: Executes Testcommand2

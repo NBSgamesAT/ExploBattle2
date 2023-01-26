@@ -1,19 +1,30 @@
 package at.nbsgames.explobattle;
 
+import at.nbsgames.explobattle.commands.CommandHandler;
+import at.nbsgames.explobattle.commands.NbsActionCommand;
+import at.nbsgames.explobattle.commands.NbsGroupCommand;
 import at.nbsgames.explobattle.enums.EnumConfigStrings;
-import org.bukkit.Bukkit;
+import at.nbsgames.explobattle.enums.EnumPermissions;
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class Main extends JavaPlugin{
 
     public void onEnable(){
         this.loadConfig();
-        System.out.println("Plugin ExploBattle Loaded Successfully");
+        this.getLogger().info("Plugin ExploBattle2 Loaded Successfully");
+        this.loadCommand();
+    }
+
+    private CommandHandler handler = new CommandHandler(this);
+
+    private void loadCommand(){
+
     }
 
     public void onDisable(){
