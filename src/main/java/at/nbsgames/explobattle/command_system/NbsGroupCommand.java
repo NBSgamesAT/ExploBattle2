@@ -1,8 +1,7 @@
-package at.nbsgames.explobattle.commands;
+package at.nbsgames.explobattle.command_system;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -17,30 +16,36 @@ public class NbsGroupCommand extends NbsMainCommand{
     }
 
 
-    public NbsGroupCommand(String name, String description, String permission) {
+    /*public NbsGroupCommand(String name, String description, String permission) {
         super(name, description, permission);
-    }
-    private LinkedList<NbsMainCommand> subCommands = new LinkedList<>();
+    }*/
+    protected LinkedList<NbsMainCommand> subCommands = new LinkedList<>();
 
 
     private boolean shouldHandle(CommandSender commandSender, Command command, String label, ArrayList<String> args){
-        if(super.permission != null && !commandSender.hasPermission(super.permission)){
+        /*if(super.permission != null && !commandSender.hasPermission(super.permission)){
             return false;
         }
         if(super.playerOnly && !(commandSender instanceof Player)) {
             return false;
-        }
+        }*/
         return true;
     }
-    private NbsMainCommand getNextCommand(CommandSender commandSender, Command command, String label, ArrayList<String> args){
+    private NbsMainCommand getNextCommand(CommandSender commandSender, ArrayList<String> args, ArrayList<NbsMainCommand> list){
 
         Optional<String> next = args.stream().findFirst();
 
         if(next.isEmpty()){
+            if(list != null) super.errMessages.commandEndedOnGroupCommand(commandSender, list);
+            return null;
+        }
+        if(subCommands.isEmpty()){
+            if(list != null) super.errMessages.emptyGroupCommand(commandSender, list);
             return null;
         }
         Optional<NbsMainCommand> nextCommand = subCommands.stream().filter(nbsMainCommand -> nbsMainCommand.getName().equals(next.get())).findFirst();
         if(nextCommand.isEmpty()){
+            if(list != null) super.errMessages.commandNotFound(commandSender, list, next.get());
             return null;
         }
 
@@ -49,17 +54,18 @@ public class NbsGroupCommand extends NbsMainCommand{
     }
 
     @Override
-    protected boolean handleCommand(CommandSender commandSender, Command command, String label, ArrayList<String> args){
+    protected boolean handleCommand(CommandSender commandSender, Command command, String label, ArrayList<String> args, ArrayList<NbsMainCommand> list){
+        list.add(this);
 
         if(!shouldHandle(commandSender, command, label, args)){
-            return false;
+            return true;
         }
 
-        NbsMainCommand next = getNextCommand(commandSender, command, label, args);
+        NbsMainCommand next = getNextCommand(commandSender, args, list);
         if(next == null){
-            return false;
+            return true;
         }
-        return next.handleCommand(commandSender, command, label, args);
+        return next.handleCommand(commandSender, command, label, args, list);
     }
 
     @Override
@@ -72,15 +78,20 @@ public class NbsGroupCommand extends NbsMainCommand{
         }
 
         if(args.size() > 1){
-            NbsMainCommand next = getNextCommand(commandSender, command, label, args);
+            NbsMainCommand next = getNextCommand(commandSender, args, null);
             if(next == null){
                 return null;
             }
             return next.handleTabCompletion(commandSender, command, label, args);
         }
 
-        String input = args.get(0);
-        return subCommands.stream().filter(cmd -> cmd.getName().startsWith(input.toLowerCase())).map(NbsMainCommand::getName).toList();
+        return subCommands.stream().map(NbsMainCommand::getName).toList();
+    }
+
+    @Override
+    public void setErrMessages(DefaultMessages messages){
+        super.errMessages = messages;
+        subCommands.forEach(cmd -> cmd.setErrMessages(messages));
     }
 
     public NbsGroupCommand addSubCommand(NbsMainCommand command) {
@@ -88,9 +99,9 @@ public class NbsGroupCommand extends NbsMainCommand{
         return this;
     }
 
-    @Override
+    /*@Override
     public NbsGroupCommand setPlayerOnly(boolean playerOnly){
         super.playerOnly = playerOnly;
         return this;
-    }
+    }*/
 }

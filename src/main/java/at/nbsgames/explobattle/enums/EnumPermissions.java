@@ -1,12 +1,13 @@
 package at.nbsgames.explobattle.enums;
 
-public enum EnumPermissions {
+public enum EnumPermissions{
 
     JOIN("explobattle.join"),
-    LEAVE("explobattle.leave"),
-    CREATE("explobattle.create"),
-    DELETE("explobattle.delete"),
-    MANAGE_PLAYER_SPAWNS("explobattle.manageplayerspawn");
+    ARENA_CREATE("explobattle.arena.create"),
+    ARENA_DELETE("explobattle.arena.delete"),
+    ARENA_INFO("explobattle.arena.info"),
+    ARENA_MANAGE_SPAWNS("explobattle.arena.manageplayerspawn"),
+    ARENA_SET_SIGN("explobattle.arena.sign");
 
     String permission;
     EnumPermissions(String permission){

@@ -1,4 +1,4 @@
-package at.nbsgames.explobattle.commands;
+package at.nbsgames.explobattle.command_system;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public abstract class NbsArgumentWorker {
         this.multiArgs = multiArgs;
         this.errorString = null;
     }
-    public abstract Object objectize(String input, NbsArguments argument) throws IllegalArgumentException;
+    public abstract Object objectify(String input, NbsArguments argument) throws FailedToObjectifyException;
     public abstract List<String> autocompletionList(String input, NbsArguments argument);
 
     void setErrorString(String errorString){

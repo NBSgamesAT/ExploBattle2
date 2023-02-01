@@ -1,4 +1,4 @@
-package at.nbsgames.explobattle.commands;
+package at.nbsgames.explobattle.command_system;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -10,30 +10,35 @@ abstract class NbsMainCommand {
 
     protected String name;
     protected String description;
-    protected String permission;
-    protected boolean playerOnly;
+    protected DefaultMessages errMessages;
 
 
     public NbsMainCommand(String name, String description){
         this.name = name;
         this.description = description;
     }
-    public NbsMainCommand(String name, String description, String permission){
+    protected void setErrMessages(DefaultMessages errMessages){
+        this.errMessages = errMessages;
+    }
+    /*public NbsMainCommand(String name, String description, String permission){
         this.name = name;
         this.description = description;
         this.permission = permission;
-    }
+    }*/
 
     public String getName() {
         return name;
     }
-
-    public NbsMainCommand setPlayerOnly(boolean playerOnly){
-        this.playerOnly = playerOnly;
-        return this;
+    public String getDescription(){
+        return description;
     }
 
-    abstract protected boolean handleCommand(CommandSender commandSender, Command command, String label, ArrayList<String> args);
+    /*public NbsMainCommand setPlayerOnly(boolean playerOnly){
+        this.playerOnly = playerOnly;
+        return this;
+    }*/
+
+    abstract protected boolean handleCommand(CommandSender commandSender, Command command, String label, ArrayList<String> args, ArrayList<NbsMainCommand> list);
     abstract protected List<String> handleTabCompletion(CommandSender commandSender, Command command, String label, ArrayList<String> args);
 
 }

@@ -1,4 +1,4 @@
-package at.nbsgames.explobattle.commands;
+package at.nbsgames.explobattle.command_system;
 
 public class NbsArguments {
 
@@ -13,6 +13,11 @@ public class NbsArguments {
         this.name = name;
         this.description = description;
         this.worker = worker;
+    }
+    public NbsArguments(String name, String description, EnumMainArgs argumentType) {
+        this.name = name;
+        this.description = description;
+        this.worker = argumentType.getWorker();
     }
 
     public String getName() {
