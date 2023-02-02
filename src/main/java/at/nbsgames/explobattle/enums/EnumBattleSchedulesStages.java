@@ -5,5 +5,7 @@ public enum EnumBattleSchedulesStages {
     STARTING_COUNTDOWN(),
     STARTING_FIGHT_COUNTDOWN(),
     FIGHTING(),
-    POST_FIGHT()
+    POST_FIGHT(),
+
+    SPECIAL_PRE_CONFIG();
 }

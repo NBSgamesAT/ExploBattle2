@@ -2,22 +2,19 @@ package at.nbsgames.explobattle;
 
 import at.nbsgames.explobattle.enums.EnumBattleSchedulesStages;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ComponentBuilder;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Arena {
 
-    private static LinkedHashMap<String, Arena> arenas = new LinkedHashMap<>();
+    private static final LinkedHashMap<String, Arena> arenas = new LinkedHashMap<>();
 
     private Sign sign;
     private boolean enabled = false;
@@ -50,12 +47,14 @@ public class Arena {
     /*
      * HELPING STATITCS FOR LOADING
      */
-    public static Arena loadMap(Main main, String arenaName){
-        Arena arena = new Arena(arenaName);
+    public static boolean loadArena(Main main, String arenaName){
+        Arena arena = Arena.arenas.get(arenaName);
+        if(arena == null){
+            arena = new Arena(arenaName);
+        }
+
         Location sign = main.getMapConfig().getBlockLocation(CommandExploBattle.ARENA_PREFIX_WITH_POINT + arenaName + ".sign");
         List<String> locationStrings = main.getMapConfig().getStringList(CommandExploBattle.ARENA_PREFIX_WITH_POINT + arenaName + ".spawns");
-
-
 
         if(sign != null && sign.getBlock().getState() instanceof Sign){
             arena.sign = (Sign) sign.getBlock().getState();
@@ -67,8 +66,16 @@ public class Arena {
 
         // If the enabled doesn't exist, it's just going to be false...
         arenas.put(arenaName, arena);
-        arena.writeSign();
-        return arena;
+        if(!arena.checkIfConfigurationIsComplete()){
+            arena.schedulesStage = EnumBattleSchedulesStages.SPECIAL_PRE_CONFIG;
+            if(arena.sign != null) arena.writeSign();
+            return false;
+        }
+        else{
+            arena.schedulesStage = EnumBattleSchedulesStages.WAITING_FOR_PLAYERS;
+            arena.writeSign();
+            return true;
+        }
     }
 
     public boolean checkIfConfigurationIsComplete(){
@@ -80,18 +87,39 @@ public class Arena {
 
 
     public void writeSign(){
+        String text;
+        TextColor color;
+        boolean showPlayerCount;
+        if(schedulesStage == EnumBattleSchedulesStages.SPECIAL_PRE_CONFIG || !enabled){
+            text = "DISABLED";
+            color = NamedTextColor.DARK_RED;
+            showPlayerCount = false;
+        }
+        else if(schedulesStage == EnumBattleSchedulesStages.STARTING_COUNTDOWN || schedulesStage == EnumBattleSchedulesStages.WAITING_FOR_PLAYERS){
+            if(currentPlayers.size() == spawnPoints.size()){
+                text = "FULL";
+                color = NamedTextColor.RED;
+                showPlayerCount = true;
+            }
+            else{
+                text = "JOIN";
+                color = NamedTextColor.DARK_GREEN;
+                showPlayerCount = true;
+            }
+        }
+        else{
+            text = "IN PROGRESS";
+            color = NamedTextColor.RED;
+            showPlayerCount = false;
+        }
         sign.setEditable(false);
         sign.line(0, Component.text("[", NamedTextColor.BLACK)
-                .append(Component.text("ExploBattle", NamedTextColor.BLUE))
-                .append(Component.text("]", NamedTextColor.BLACK)));
-        sign.line(1, Component.text("Join", NamedTextColor.DARK_GREEN));
-        sign.line(2, Component.text(""));
-        sign.line(3, Component.text("[", NamedTextColor.BLACK)
-                .append(Component.text("ExploBattle", NamedTextColor.BLUE))
-                .append(Component.text("]", NamedTextColor.BLACK)));
-        System.out.println(sign.line(1));
-        System.out.println(sign.line(2));
-        System.out.println(sign.line(3));
+                .append(Component.text("ExploBattle", TextColor.color(0x0031EE))
+                .append(Component.text("]", NamedTextColor.BLACK))));
+        sign.line(1, Component.text(text, color));
+        sign.line(2, Component.text(name, NamedTextColor.BLACK));
+        sign.line(3, Component.text(showPlayerCount ? currentPlayers.size() + " / " + spawnPoints.size() : "-----", NamedTextColor.BLACK));
+        sign.update();
     }
 
 }

@@ -42,7 +42,7 @@ public class Main extends JavaPlugin{
         List<String> mapNames = this.mapConfig.getListOfKeys(CommandExploBattle.ARENA_PREFIX);
         if(mapNames == null) return;
         for(String name : mapNames){
-            if(Arena.loadMap(this, name) == null){
+            if(!Arena.loadArena(this, name)){
                 this.getLogger().info("[ExploBattle2] Arena \"" + name + "\" could not be loaded please check the sign and if the arena has 2 spawns.");
             }
         }
