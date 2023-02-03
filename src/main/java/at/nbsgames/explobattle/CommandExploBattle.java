@@ -1,6 +1,7 @@
 package at.nbsgames.explobattle;
 
 import at.nbsgames.explobattle.command_system.*;
+import at.nbsgames.explobattle.enums.EnumConfigStrings;
 import at.nbsgames.explobattle.enums.EnumPermissions;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -43,6 +44,7 @@ class CommandExploBattle {
             String name = (String) args[0];
             main.getMapConfig().set(ARENA_PREFIX_WITH_POINT + name + ".enabled", false);
             sender.sendMessage(ChatColor.GREEN + "Arena " + name + " has been created. Please add spawn points and a sign location for the map.");
+            Arena.loadArena(main, name);
             return true;
         }).setArguments(new NbsArguments("name", "The name for the arena", EnumMainArgs.STRING)));
 
@@ -50,6 +52,7 @@ class CommandExploBattle {
             String name = (String) args[0];
             main.getMapConfig().set(ARENA_PREFIX_WITH_POINT + name + ".enabled", false);
             sender.sendMessage(ChatColor.GREEN + "Arena " + name + " has been deleted.");
+
             return true;
         }).setArguments(new NbsArguments("name", "The name for the arena", MAP_ARGUMENT_WORKER)));
 
@@ -60,6 +63,19 @@ class CommandExploBattle {
             sender.sendMessage(Component.text(mapString).color(TextColor.color(0x00FF00)));
             return true;
         }));
+
+        arena.addSubCommand(new NbsActionCommand("enable", "Enable an Arena", EnumPermissions.ARENA_INFO.toString(), (sender, command, label, args) -> {
+            String map = (String) args[0];
+            boolean enabled = (boolean) args[1];
+
+            main.getMapConfig().set(ARENA_PREFIX_WITH_POINT + map + ".enabled", enabled);
+            Arena.loadArena(main, map);
+            sender.sendMessage(Component.text("Arena " + map + " should now be " + (enabled ? "enabled." : "disabled.")).color(NamedTextColor.GREEN));
+
+            return true;
+        }).setArguments(new NbsArguments("name", "The name for the arena", MAP_ARGUMENT_WORKER),
+                new NbsArguments("state", "The new state, either true or false", EnumMainArgs.BOOLEAN)));
+
         arena.addSubCommand(new NbsActionCommand("setsign", "Set the sign for a given arena", EnumPermissions.ARENA_SET_SIGN.toString(), (sender, command, label, args) -> {
             String mapName = (String) args[0];
             Player p = (Player) sender;
@@ -72,6 +88,8 @@ class CommandExploBattle {
 
             main.getMapConfig().set(ARENA_PREFIX_WITH_POINT + mapName + ".sign", MapConfig.locationToBlockLocationString(block.getLocation()));
             sender.sendMessage(Component.text("The sign has been set").color(NamedTextColor.GREEN));
+            Arena.loadArena(main, mapName);
+
             return true;
         }).setPlayerOnly(true).setArguments(new NbsArguments("arena", "The name of the arena", MAP_ARGUMENT_WORKER)));
 
@@ -92,6 +110,8 @@ class CommandExploBattle {
                     p.sendMessage(Component.text("A spawn with id 0 has been added to the arena " + arenaName).color(NamedTextColor.GREEN));
                 }
             });
+
+            Arena.loadArena(main, arenaName);
             return true;
         }).setPlayerOnly(true).setArguments(new NbsArguments("arena", "The arena that the spawn point is in", MAP_ARGUMENT_WORKER)));
 
@@ -112,6 +132,7 @@ class CommandExploBattle {
                 }
                 list.remove(spawnNumber);
                 conf.set(ARENA_PREFIX_WITH_POINT + arenaName + ".spawns", list);
+                Arena.loadArena(main, arenaName);
             });
             return true;
         }).setPlayerOnly(true).setArguments(new NbsArguments("arena", "The arena that the spawn point is in", MAP_ARGUMENT_WORKER),
@@ -131,6 +152,21 @@ class CommandExploBattle {
         }).setArguments(new NbsArguments("arena", "The arena of the spawn points", MAP_ARGUMENT_WORKER)));
 
         arena.addSubCommand(spawns);
+
+
+        gc.addSubCommand(new NbsActionCommand("leave", "Leaves the currently joined ExploBattle", ((sender, command, label, args) -> {
+            boolean info = Arena.removePlayerFromSystem((Player) sender);
+            if(info){
+                String strg = main.getConfig().getString(EnumConfigStrings.TEXT_PLAYER_LEAVE.toString()).replace("(PLAYER)", sender.getName());
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', strg));
+            }
+            else{
+                String strg = main.getConfig().getString(EnumConfigStrings.PLAYER_JOIN_FAILURE.toString()).replace("(PLAYER)", sender.getName());
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', strg));
+            }
+            return true;
+        })).setPlayerOnly(true));
+
 
         gc.addSubCommand(arena);
 

@@ -5,7 +5,9 @@ public enum EnumConfigStrings {
     TEXT_PLAYER_JOINED("text.game.player_joined"),
     TEXT_PLAYER_LEAVE("text.game.player_leave"),
     TEXT_PLAYER_DIED("text.game.player_died"),
-    TEXT_PLAYER_DISCONNECTED("text.game.player_disconnected");
+    TEXT_PLAYER_DISCONNECTED("text.game.player_disconnected"),
+    TEXT_ALREADY_JOINED("text.system.player_has_already_joined"),
+    PLAYER_JOIN_FAILURE("text.system.player_join_failure");
 
     String config;
     EnumConfigStrings(String config){

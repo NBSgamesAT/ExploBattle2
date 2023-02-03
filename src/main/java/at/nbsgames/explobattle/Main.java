@@ -3,6 +3,7 @@ package at.nbsgames.explobattle;
 import at.nbsgames.explobattle.command_system.CommandHandler;
 import at.nbsgames.explobattle.command_system.NbsGroupCommand;
 import at.nbsgames.explobattle.enums.EnumConfigStrings;
+import at.nbsgames.explobattle.events.RightClickEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -27,6 +28,7 @@ public class Main extends JavaPlugin{
         this.signManager = new SignManager();
         this.loadConfig();
         this.loadCommand();
+        this.loadEvents();
         this.loadArenas();
         this.getLogger().info("[ExploBattle2]Plugin ExploBattle2 Loaded successfully.");
     }
@@ -36,6 +38,9 @@ public class Main extends JavaPlugin{
         NbsGroupCommand cmd = CommandExploBattle.getCommand(this);
         handler.registerCommand(cmd);
         handler.registerCommandAsAlias(cmd, "eb");
+    }
+    private void loadEvents(){
+        this.getServer().getPluginManager().registerEvents(new RightClickEvent(this), this);
     }
 
     private void loadArenas(){
@@ -56,13 +61,12 @@ public class Main extends JavaPlugin{
         List<String> list = new ArrayList<>();
         list.add("This is the config for Explo Battle. Just Change the lines if you want to change them god them.");
         this.getConfig().options().setHeader(list);
-        this.getConfig().addDefault(EnumConfigStrings.TEXT_PLAYER_JOINED.toString(), ChatColor.GREEN + "+ (PLAYER) has joined the game!");
-        this.getConfig().addDefault(EnumConfigStrings.TEXT_PLAYER_LEAVE.toString(), ChatColor.RED + "- (PLAYER) has left the game!");
-        this.getConfig().addDefault(EnumConfigStrings.TEXT_PLAYER_JOINED.toString(), ChatColor.RED + "- (PLAYER) disconnected and was removed from the game!");
-        this.getConfig().addDefault(EnumConfigStrings.TEXT_PLAYER_DIED.toString(), ChatColor.YELLOW + "+ (PLAYER) died!!");
-        //this.getConfig().addDefault(EnumConfigStrings.TEXT_PLAYER_JOINED.toString(), ChatColor.GREEN + "+ (PLAYER) has joined the game!");
-        //this.getConfig().addDefault(EnumConfigStrings.TEXT_PLAYER_JOINED.toString(), ChatColor.GREEN + "+ (PLAYER) has joined the game!");
-        //this.getConfig().addDefault(EnumConfigStrings.TEXT_PLAYER_JOINED.toString(), ChatColor.GREEN + "+ (PLAYER) has joined the game!");
+        this.getConfig().addDefault(EnumConfigStrings.TEXT_PLAYER_JOINED.toString(),  "&a+ (PLAYER) has joined the game!");
+        this.getConfig().addDefault(EnumConfigStrings.TEXT_PLAYER_LEAVE.toString(), "&c- (PLAYER) has left the game!");
+        this.getConfig().addDefault(EnumConfigStrings.TEXT_PLAYER_DISCONNECTED.toString(), "&c- (PLAYER) disconnected and was removed from the game!");
+        this.getConfig().addDefault(EnumConfigStrings.TEXT_PLAYER_DIED.toString(), "&e+ (PLAYER) died!!");
+        this.getConfig().addDefault(EnumConfigStrings.PLAYER_JOIN_FAILURE.toString(), "&cSomething went wrong. Either the map could not be found or it's full.");
+        this.getConfig().addDefault(EnumConfigStrings.TEXT_ALREADY_JOINED.toString(), "&cYou already joined (ARENA).");
         this.saveConfig();
     }
 
