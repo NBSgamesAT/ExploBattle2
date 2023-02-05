@@ -3,13 +3,17 @@ package at.nbsgames.explobattle;
 import at.nbsgames.explobattle.command_system.*;
 import at.nbsgames.explobattle.enums.EnumConfigStrings;
 import at.nbsgames.explobattle.enums.EnumPermissions;
+import at.nbsgames.explobattle.events.RightClickEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
@@ -167,9 +171,32 @@ class CommandExploBattle {
             return true;
         })).setPlayerOnly(true));
 
+        gc.addSubCommand(new NbsActionCommand("items", "Let's you optain the four explobattle items", EnumPermissions.USE_WEAPONS_OUTSIDE_ARENA.toString(), ((sender, command, label, args) -> {
+            Player p = (Player) sender;
+
+            ItemStack gun = makeItemWithName(Material.NETHERITE_HOE, RightClickEvent.GUN);
+
+            ItemStack grenade = makeItemWithName(Material.TNT, RightClickEvent.GRENADE);
+
+            ItemStack uGrenade = makeItemWithName(Material.SNOW, RightClickEvent.ULTRA_GRENADE);
+
+            ItemStack bazooka = makeItemWithName(Material.NETHERITE_AXE, RightClickEvent.BAZOOKA);
+
+            p.getInventory().addItem(gun, grenade, uGrenade, bazooka);
+            sender.sendMessage(Component.text("All special weapons have been given to you").color(NamedTextColor.GREEN));
+            return true;
+        })).setPlayerOnly(true));
+
 
         gc.addSubCommand(arena);
 
         return gc;
+    }
+    public static ItemStack makeItemWithName(Material mat, Component name){
+        ItemStack item = new ItemStack(mat);
+        ItemMeta meta = item.getItemMeta();
+        meta.displayName(name);
+        item.setItemMeta(meta);
+        return item;
     }
 }

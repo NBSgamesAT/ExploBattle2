@@ -7,7 +7,8 @@ public enum EnumPermissions{
     ARENA_DELETE("explobattle.arena.delete"),
     ARENA_INFO("explobattle.arena.info"),
     ARENA_MANAGE_SPAWNS("explobattle.arena.manageplayerspawn"),
-    ARENA_SET_SIGN("explobattle.arena.sign");
+    ARENA_SET_SIGN("explobattle.arena.sign"),
+    USE_WEAPONS_OUTSIDE_ARENA("explobattle.userweaponsoutsidearena");
 
     String permission;
     EnumPermissions(String permission){

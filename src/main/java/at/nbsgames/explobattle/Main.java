@@ -3,6 +3,8 @@ package at.nbsgames.explobattle;
 import at.nbsgames.explobattle.command_system.CommandHandler;
 import at.nbsgames.explobattle.command_system.NbsGroupCommand;
 import at.nbsgames.explobattle.enums.EnumConfigStrings;
+import at.nbsgames.explobattle.events.ExplosionEvent;
+import at.nbsgames.explobattle.events.ProjectileHitSomethingEvent;
 import at.nbsgames.explobattle.events.RightClickEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
@@ -41,6 +43,8 @@ public class Main extends JavaPlugin{
     }
     private void loadEvents(){
         this.getServer().getPluginManager().registerEvents(new RightClickEvent(this), this);
+        this.getServer().getPluginManager().registerEvents(new ExplosionEvent(this), this);
+        this.getServer().getPluginManager().registerEvents(new ProjectileHitSomethingEvent(this), this);
     }
 
     private void loadArenas(){

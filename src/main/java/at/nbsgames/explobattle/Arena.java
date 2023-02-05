@@ -121,7 +121,7 @@ public class Arena {
     }
 
     public static boolean removePlayerFromSystem(Player player){
-        Arena arena = playerUuidToArena.get(player);
+        Arena arena = playerUuidToArena.remove(player.getUniqueId());
 
         if(arena == null) return false;
 
@@ -135,11 +135,21 @@ public class Arena {
             }
         }
 
-
         arena.writeSign();
         return true;
     }
 
+    public static boolean isInActiveMatch(Player player){
+        Arena arena = playerUuidToArena.get(player.getUniqueId());
+        if(arena == null) return false;
+
+        if(arena.schedulesStage == EnumBattleSchedulesStages.STARTING_COUNTDOWN ||
+                arena.schedulesStage == EnumBattleSchedulesStages.SPECIAL_PRE_CONFIG ||
+                arena.schedulesStage == EnumBattleSchedulesStages.WAITING_FOR_PLAYERS){
+            return false;
+        }
+        return true;
+    }
 
 
     public void writeSign(){
