@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class ExplosionEvent implements Listener {
 
@@ -15,17 +16,14 @@ public class ExplosionEvent implements Listener {
         this.main = main;
     }
 
-    public static ArrayList<Integer> tnt = new ArrayList<>();
-    public static ArrayList<Integer> bazooka = new ArrayList<>();
+    public static LinkedList<Integer> tnt = new LinkedList<>();
+    public static LinkedList<Integer> bazooka = new LinkedList<>();
+    public static LinkedList<Integer> ultraBazooka = new LinkedList<>();
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onExplosion(EntityExplodeEvent event){
         if(tnt.remove((Integer) event.getEntity().getEntityId())){
             event.blockList().clear(); // Clearing the blocks
-        }
-        if(bazooka.remove((Integer) event.getEntity().getEntityId())){
-            event.blockList().clear(); // Clearing the blocks
-            event.getEntity().remove();
         }
     }
 }

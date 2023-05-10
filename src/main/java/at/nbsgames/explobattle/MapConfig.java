@@ -16,6 +16,9 @@ import java.util.List;
 
 public class MapConfig{
 
+    public static final String ARENA_PREFIX = "arenas";
+    public static final String ARENA_PREFIX_WITH_POINT = ARENA_PREFIX + ".";
+
     private File file;
     private String fileName;
     private FileConfiguration conf;

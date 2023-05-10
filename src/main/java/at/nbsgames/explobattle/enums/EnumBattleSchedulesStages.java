@@ -2,8 +2,8 @@ package at.nbsgames.explobattle.enums;
 
 public enum EnumBattleSchedulesStages {
     WAITING_FOR_PLAYERS(),
-    STARTING_COUNTDOWN(),
-    STARTING_FIGHT_COUNTDOWN(),
+    WAIT_COUNTDOWN(),
+    FIGHT_COUNTDOWN(),
     FIGHTING(),
     POST_FIGHT(),
 
